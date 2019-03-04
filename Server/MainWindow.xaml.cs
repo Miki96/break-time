@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using StackExchange.Redis;
+using System.IO;
+using System.Windows.Threading;
 
 namespace Server
 {
@@ -20,9 +23,38 @@ namespace Server
     /// </summary>
     public partial class MainWindow : Window
     {
+        // game manager
+        Manager manager;
+
         public MainWindow()
         {
             InitializeComponent();
+            // create manager
+            manager = Manager.getInstance();
+            // set reference to label
+            manager.window = this;
+        }
+
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            manager.startServer();
+        }
+
+        public void updateText(String txt)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                info.Text += txt + "\n";
+            }), DispatcherPriority.Background);
+        }
+
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // Autoscroll
+            if (e.ExtentHeightChange != 0)
+            {
+                scroll.ScrollToVerticalOffset(scroll.ExtentHeight);
+            }
         }
     }
 }

@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Server"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="Breakout Server" Height="498.244" Width="688.512" ResizeMode="NoResize">
+    <Grid Background="#FFC7C7C7">
+        <Grid HorizontalAlignment="Left" Height="120" Margin="303,10,0,0" VerticalAlignment="Top" Width="354" Background="#FFC7C7C7">
+            <Button Content="W" HorizontalAlignment="Left" Height="45" Margin="244,65,0,0" VerticalAlignment="Top" Width="45" Background="#FF4D4D4D" Foreground="#FFD6D6D6" FontSize="16"/>
+            <Border BorderBrush="#FF747474" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" Background="#FF898989">
+                <Label Content="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" FontWeight="Bold" Foreground="White"/>
+            </Border>
+            <Border BorderBrush="#FF747474" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="115,10,0,0" VerticalAlignment="Top" Width="100" Background="#FF898989">
+                <Label Content="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" FontWeight="Bold" Foreground="White"/>
+            </Border>
+            <Label Content="EMPTY" HorizontalAlignment="Left" Margin="244,10,0,0" VerticalAlignment="Top" Width="95" Height="45" Background="#FFE4E4E4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF4F4F4F"/>
+            <Button Content="S" HorizontalAlignment="Left" Height="45" Margin="294,65,0,0" VerticalAlignment="Top" Width="45" Background="#FF4D4D4D" Foreground="#FFD6D6D6" FontSize="16"/>
+        </Grid>
+        <Canvas HorizontalAlignment="Left" Height="427" Margin="10,10,0,0" VerticalAlignment="Top" Width="288" Background="#FF4D4D4D"/>
+        <Grid HorizontalAlignment="Left" Height="40" Margin="303,135,0,0" VerticalAlignment="Top" Width="354" Background="#FFC7C7C7">
+            <Button x:Name="start" Content="START" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="344" FontSize="9" Height="20" Click="Start_Click"/>
+        </Grid>
+        <ScrollViewer x:Name="scroll" HorizontalAlignment="Left" Height="257" Margin="315,180,0,0" VerticalAlignment="Top" Width="342" ScrollChanged="ScrollViewer_ScrollChanged">
+            <TextBlock x:Name="info" TextWrapping="Wrap" Background="White"/>
+        </ScrollViewer>
     </Grid>
 </Window>
