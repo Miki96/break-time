@@ -9,17 +9,6 @@ using StackExchange.Redis;
 
 namespace Server
 {
-    public struct Coords
-    {
-        public int x, y;
-
-        public Coords(int p1, int p2)
-        {
-            x = p1;
-            y = p2;
-        }
-    }
-
     class Game
     {
         // game manager
@@ -33,13 +22,14 @@ namespace Server
         // arena
         private int width;
         private int height;
+
+        // ball
         private Coords ball;
         private Coords speed;
         private int size;
 
         // timer
         private Timer timer;
-
 
         // check if game is full
         public bool Full { get; private set; }
@@ -52,7 +42,7 @@ namespace Server
             // arena
             width = 300;
             height = 400;
-            ball = new Coords(100, 100);
+            ball = new Coords(57, 165);
             speed = new Coords(5, 5);
             size = 10;
             // players
@@ -60,6 +50,7 @@ namespace Server
             players = new List<Player>();
         }
 
+        // start game once all players are present
         private void startGame()
         {
             // notify server
@@ -72,6 +63,7 @@ namespace Server
             timer.Start();
         }
 
+        // change ball position
         private async void moveBall(Object o, EventArgs e)
         {
             // change position
@@ -84,6 +76,7 @@ namespace Server
             await sub.PublishAsync("moves", ball.x + " " + ball.y);
         }
 
+        // add new player to a game
         public void addPlayer(String tag)
         {
             // add new player

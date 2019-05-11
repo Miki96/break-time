@@ -47,12 +47,8 @@ namespace Client
 
         private async void initRedis()
         {
-            // read file for password
-            String s = "";
-            using (StreamReader sr = new StreamReader(@"../../../redpass.txt"))
-            {
-                s = sr.ReadLine();
-            }
+            // conect to server
+            String s = "localhost";
             redis = await ConnectionMultiplexer.ConnectAsync(s);
             db = redis.GetDatabase();
             sub = redis.GetSubscriber();

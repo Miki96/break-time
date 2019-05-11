@@ -48,12 +48,8 @@ namespace Server
 
         private async void initRedis()
         {
-            // read file for password
-            String s = "";
-            using (StreamReader sr = new StreamReader(@"../../../redpass.txt"))
-            {
-                s = sr.ReadLine();
-            }
+            // conect to server
+            String s = "localhost";
             // init redis
             redis = await ConnectionMultiplexer.ConnectAsync(s);
             db = redis.GetDatabase();
@@ -87,13 +83,12 @@ namespace Server
         {
             mutex.WaitOne();
 
-            // server is full
             if (count == capacity)
             {
+                // server is full
                 sub.PublishAsync("game", "full");
                 window.updateText("FULL : " + id);
             }
-            // save new player
             else
             {
                 // find game
