@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
+using Newtonsoft.Json;
 
 namespace Server
 {
@@ -15,6 +16,7 @@ namespace Server
         private ConnectionMultiplexer redis;
         private IDatabase db;
         private ISubscriber sub;
+
         // sync lock
         private Mutex mutex;
 
@@ -25,6 +27,7 @@ namespace Server
         private int count;
         private int capacity;
         private List<Game> games;
+        private bool live;
 
         // singleton instance
         private static Manager instance = null;
@@ -42,10 +45,12 @@ namespace Server
             initRedis();
             // data
             count = 0;
-            capacity = 1;
+            capacity = 2;
             mutex = new Mutex();
+            live = false;
         }
 
+        // connect to redis database
         private async void initRedis()
         {
             // conect to server
@@ -59,6 +64,7 @@ namespace Server
             initGames();
         }
 
+        // create empty games connected to redis
         private void initGames()
         {
             // create empty games
@@ -69,25 +75,39 @@ namespace Server
             }
         }
 
+        // subscribe to channel for players
         public async void startServer()
         {
-            window.updateText("Server is live.");
-            // listen for new players
-            await sub.SubscribeAsync("find", (channel, msg) =>
+            if (!live)
             {
-                handlePlayer(msg);
-            });
+                live = true;
+                window.updateText("Server is live.");
+                // listen for new players
+                await sub.SubscribeAsync("find", (channel, msg) =>
+                {
+                    handlePlayer(msg);
+                });
+            } else
+            {
+                window.updateText("Server is already live.");
+            }
         }
 
-        private void handlePlayer(String id)
+        // check for available games
+        private void handlePlayer(String msg)
         {
+            // lock
             mutex.WaitOne();
+
+            // read message
+            PlayerInfo player = JsonConvert.DeserializeObject<PlayerInfo>(msg);
 
             if (count == capacity)
             {
-                // server is full
-                sub.PublishAsync("game", "full");
-                window.updateText("FULL : " + id);
+                // server is full, notify player
+                fullServerResponse(player.ID.ToString());
+                // log player info
+                window.updateText("FULL : " + player.ID);
             }
             else
             {
@@ -102,28 +122,41 @@ namespace Server
                     }
                 }
                 // add player to a game
-                if (game != null)
+                window.updateText("PLAYER : " + player.ID + " " + player.Tag);
+                game.addPlayer(player);
+                // increase count if the game has started
+                if (game.Full)
                 {
-                    window.updateText("PLAYER : " + id);
-                    game.addPlayer(id);
-                    // increase count if the game has started
-                    if (game.Full)
-                    {
-                        count++;
-                    }
+                    count++;
                 }
             }
 
+            // unlock
             mutex.ReleaseMutex();
         }
 
-        public void gameFinished()
+        // server full response
+        private void fullServerResponse(string player)
+        {
+            GameResponse response = new GameResponse()
+            {
+                Response = ResponseType.FULL
+            };
+            string toSend = JsonConvert.SerializeObject(response);
+
+            // notify
+            sub.PublishAsync(player, toSend);
+        }
+
+        public void endGame()
         {
             mutex.WaitOne();
 
             count--;
 
             mutex.ReleaseMutex();
+
+            window.updateText("Game ended.");
         }
     }
 }

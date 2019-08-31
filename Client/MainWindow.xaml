@@ -5,14 +5,124 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Breakout" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" KeyDown="Window_KeyDown">
-    <Grid Background="#FF4B4B4B">
-        <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="400" Margin="10,10,10,10" VerticalAlignment="Top" Width="300" Background="#FF818181">
-            <Ellipse x:Name="ball" Fill="#FFF4F4F5" Height="10" Canvas.Left="100" Stroke="Black" Canvas.Top="100" Width="10"/>
-            <Grid x:Name="panel" Canvas.Left="0" Canvas.Top="0" Margin="0" Width="300" Height="400" Background="#FF1F1F1F">
-                <Label x:Name="info" Content="Redis connecting..." Margin="0" VerticalAlignment="Center" Foreground="#FFD1D1D1" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Title="Breakout" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="SameBackgroundButton">
+            <Setter Property="Background" Value="#FF343434"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!--<Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF474747"/>
+                </Trigger>-->
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Width="466">
+        <Border BorderBrush="#99B2B2B2" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Padding="0" Background="#FFEFEFEF">
+            <Grid>
+                <Border BorderBrush="#FF0C0C0C" BorderThickness="5" HorizontalAlignment="Left" Margin="10,40,10,10" VerticalAlignment="Top" Padding="0">
+                    <Canvas x:Name="canvas" Margin="0" Width="400" Height="600">
+                        <Ellipse x:Name="ball1" Fill="#FFEA3F24" Height="10" Canvas.Left="155" Canvas.Top="77" Width="10"/>
+                        <Ellipse x:Name="ball2" Fill="#FF3D3DFF" Height="10" Canvas.Left="250" Canvas.Top="529" Width="10"/>
+                        <Rectangle x:Name="playerRect" Fill="#FF3D3DFF" Height="15" Canvas.Left="269" Canvas.Top="565" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Rectangle x:Name="enemyRect" Fill="#FFEA3F24" Height="15" Canvas.Left="66" Canvas.Top="20" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Label x:Name="score" Content="0 : 0" Canvas.Left="185" Canvas.Top="1" Width="85" Foreground="White" FontSize="36" HorizontalContentAlignment="Right" FontWeight="Bold" FontFamily="Agency FB" Visibility="Hidden"/>
+                        <Rectangle x:Name="shield4" Fill="#FFFFEA18" Height="5" Width="400" Canvas.Top="0" Canvas.Left="0"/>
+                        <Rectangle x:Name="shield5" Fill="#FFFF9618" Height="5" Width="400" Canvas.Top="5"/>
+                        <Rectangle x:Name="shield6" Fill="#FFFF4218" Height="5" Width="400" Canvas.Top="10"/>
+                        <Rectangle x:Name="shield3" Fill="#FF3D3DFF" Height="5" Width="400" Canvas.Top="586"/>
+                        <Rectangle x:Name="shield2" Fill="#FF186CFF" Height="5" Width="400" Canvas.Top="590"/>
+                        <Rectangle x:Name="shield1" Fill="#FF18ABFF" Height="5" Width="400" Canvas.Top="595"/>
+                    </Canvas>
+                </Border>
+                <Grid Cursor="SizeAll" HorizontalAlignment="Left" Height="40" Margin="10,0" VerticalAlignment="Top" Width="410" MouseLeftButtonDown="Grid_MouseLeftButtonDown" Background="#00000000">
+                    <Label x:Name="labelScore" Content="0 - 0" HorizontalAlignment="Left" Margin="170,0,0,0" VerticalAlignment="Top" Width="70" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40" Visibility="Hidden"/>
+                    <Label x:Name="labelShield" Content="SHIELD  0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" Height="40" FontWeight="Bold"/>
+                    <Label Content="TIME" HorizontalAlignment="Left" Margin="305,0,0,0" VerticalAlignment="Top" Width="47" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Right" Height="40"/>
+                    <Label Content=":" HorizontalAlignment="Left" Margin="367,0,0,0" VerticalAlignment="Top" Width="15" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40"/>
+                    <Label x:Name="labelTimeMinutes" Content="0" HorizontalAlignment="Left" Margin="345,0,0,0" VerticalAlignment="Top" Width="31" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Right" Height="40"/>
+                    <Label x:Name="labelTimeSeconds" Content="00" HorizontalAlignment="Left" Margin="374,0,0,0" VerticalAlignment="Top" Width="33" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" Height="40"/>
+                    <Border Margin="100,5,110,5" BorderThickness="0" HorizontalAlignment="Center" BorderBrush="Black" Width="180">
+                        <Grid x:Name="topScore" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" StrokeThickness="3"/>
+                            <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" Margin="25,0,0,0" StrokeThickness="3"/>
+                            <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" Margin="50,0,0,0" StrokeThickness="3"/>
+                            <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" Margin="75,0,0,0" StrokeThickness="3"/>
+                            <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" Margin="100,0,0,0" StrokeThickness="3"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Grid x:Name="panelMenu" Margin="16,45,16,16">
+                    <Label x:Name="info" Content="" Margin="0,442,0,0" VerticalAlignment="Top" Foreground="#FF646464" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Width="250" Background="{x:Null}" Height="51" BorderThickness="2"/>
+                    <Label Content="USERNAME" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="Agency FB" FontWeight="Bold"/>
+                    <TextBox x:Name="inputTag" HorizontalAlignment="Center" Margin="74,184,74,0" TextWrapping="Wrap" Text="ShadowRunner" VerticalAlignment="Top" Width="250" Background="White" Foreground="Black" SelectionBrush="#FF666666" BorderBrush="#FFD6D6D6" TextAlignment="Center" MaxLines="1" Height="40" Padding="0" VerticalContentAlignment="Center" MaxLength="20"/>
+                    <Label Content="SERVER" Margin="0,242,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="Agency FB" FontWeight="Bold"/>
+                    <TextBox x:Name="inputServer" HorizontalAlignment="Center" Margin="74,286,74,0" TextWrapping="Wrap" Text="127.0.0.1:6379" VerticalAlignment="Top" Width="250" Background="White" Foreground="Black" SelectionBrush="#FF666666" BorderBrush="#FFD6D6D6" TextAlignment="Center" MaxLines="1" Height="40" Padding="0" VerticalContentAlignment="Center" MaxLength="20"/>
+                    <Border Height="54" Margin="0,371,0,0" VerticalAlignment="Top" Width="250" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="#FFD6D6D6" >
+                        <Button x:Name="btnConnect" Cursor="Hand" Style="{StaticResource SameBackgroundButton}" Content="CONNECT" FontSize="24" BorderBrush="#FF4B4B4B" Foreground="Black" Click="BtnConnect_Click" FontFamily="Agency FB" Background="White" BorderThickness="2" FontWeight="Bold"/>
+                    </Border>
+                    <Label x:Name="labelUser" Content="Generating ID" HorizontalAlignment="Right" Margin="0,10,0,0" VerticalAlignment="Top" Width="97" Foreground="Gray" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Visibility="Hidden"/>
+                </Grid>
+                <Grid x:Name="panelCountdown" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
+                    <Label x:Name="labelCountdown" Content="3" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="150" FontFamily="Agency FB"/>
+                </Grid>
+                <Grid x:Name="panelWaiting" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
+                    <Label x:Name="labelWaiting" Content="CLICK TO START" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold"/>
+                </Grid>
+                <Grid x:Name="panelScore" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
+                    <Label x:Name="labelScorePanel" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold" Content="PLAYER" HorizontalContentAlignment="Center" Margin="0,82,0,216"/>
+                    <Label x:Name="labelScoreAction" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold" Content="SCORED" HorizontalContentAlignment="Center" Margin="0,126,0,172"/>
+                    <Grid x:Name="panelScoreBlocks" HorizontalAlignment="Center" Height="71" Margin="49,188,49,0" VerticalAlignment="Top" Width="302">
+                        <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="11,0,241,10" StrokeThickness="5" Fill="#FFEA3F24"/>
+                        <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="66,0,186,10" StrokeThickness="5" Fill="#FF3D3DFF"/>
+                        <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="121,0,131,10" StrokeThickness="5" Fill="#FF3D3DFF"/>
+                        <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="176,0,76,10" StrokeThickness="5" Fill="#FFEA3F24"/>
+                        <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="231,0,21,10" StrokeThickness="5"/>
+                    </Grid>
+                </Grid>
             </Grid>
-        </Canvas>
-
+        </Border>
+        <Border x:Name="btnClose" Cursor="Hand" Margin="0" BorderThickness="1" BorderBrush="#99B2B2B2" Background="#FFEFEFEF" Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Top" MouseDown="BtnClose_MouseDown">
+            <Grid>
+                <Rectangle Fill="Black" HorizontalAlignment="Left" Height="2" Margin="2,11,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5">
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-45"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Fill="Black" HorizontalAlignment="Left" Height="2" Margin="2,11,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="0.5,0.5">
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="45"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+            </Grid>
+        </Border>
+        <Border x:Name="btnMinimize" Cursor="Hand" Margin="0,32,0,0" BorderThickness="1" BorderBrush="#99B2B2B2" Background="#FFEFEFEF" Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Top" MouseDown="BtnMinimize_MouseDown">
+            <Grid>
+                <Rectangle Fill="Black" HorizontalAlignment="Left" Height="2.5" Margin="3,15,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="0.5,0.5">
+                </Rectangle>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

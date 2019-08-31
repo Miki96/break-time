@@ -31,15 +31,17 @@ namespace Server
             InitializeComponent();
             // create manager
             manager = Manager.getInstance();
-            // set reference to label
+            // set reference to window
             manager.window = this;
         }
 
+        // click on start
         private void Start_Click(object sender, RoutedEventArgs e)
         {
             manager.startServer();
         }
 
+        // update text from manager
         public void updateText(String txt)
         {
             Dispatcher.BeginInvoke(new Action(() =>
@@ -48,6 +50,7 @@ namespace Server
             }), DispatcherPriority.Background);
         }
 
+        // scroll on log
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             // Autoscroll

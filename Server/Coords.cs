@@ -6,14 +6,27 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public struct Coords
+    public class Coords
     {
-        public int x, y;
+        public double X {get; set;}
+        public double Y { get; set; }
 
-        public Coords(int p1, int p2)
+        public Coords(double p1, double p2)
         {
-            x = p1;
-            y = p2;
+            X = p1;
+            Y = p2;
+        }
+    }
+
+    public class Position
+    {
+        public int I { get; set; }
+        public int J { get; set; }
+
+        public Position(int i, int j)
+        {
+            I = i;
+            J = j;
         }
     }
 }
