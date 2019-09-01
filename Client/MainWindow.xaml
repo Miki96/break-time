@@ -33,8 +33,8 @@
                     <Canvas x:Name="canvas" Margin="0" Width="400" Height="600">
                         <Ellipse x:Name="ball1" Fill="#FFEA3F24" Height="10" Canvas.Left="155" Canvas.Top="77" Width="10"/>
                         <Ellipse x:Name="ball2" Fill="#FF3D3DFF" Height="10" Canvas.Left="250" Canvas.Top="529" Width="10"/>
-                        <Rectangle x:Name="playerRect" Fill="#FF3D3DFF" Height="15" Canvas.Left="269" Canvas.Top="565" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Rectangle x:Name="enemyRect" Fill="#FFEA3F24" Height="15" Canvas.Left="66" Canvas.Top="20" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Rectangle x:Name="playerRect" Fill="#FF3D3DFF" Height="15" Canvas.Left="269" Canvas.Top="565" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" RadiusX="3" RadiusY="3"/>
+                        <Rectangle x:Name="enemyRect" Fill="#FFEA3F24" Height="15" Canvas.Left="66" Canvas.Top="20" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" RadiusX="3" RadiusY="3"/>
                         <Label x:Name="score" Content="0 : 0" Canvas.Left="185" Canvas.Top="1" Width="85" Foreground="White" FontSize="36" HorizontalContentAlignment="Right" FontWeight="Bold" FontFamily="./#Agency FB" Visibility="Hidden"/>
                         <Rectangle x:Name="shield4" Fill="#FFFFEA18" Height="5" Width="400" Canvas.Top="0" Canvas.Left="0"/>
                         <Rectangle x:Name="shield5" Fill="#FFFF9618" Height="5" Width="400" Canvas.Top="5"/>
