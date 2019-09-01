@@ -41,8 +41,6 @@ namespace Server
 
         private Manager()
         {
-            // init redis
-            initRedis();
             // data
             count = 0;
             capacity = 2;
@@ -51,10 +49,10 @@ namespace Server
         }
 
         // connect to redis database
-        private async void initRedis()
+        private async Task initRedis()
         {
             // conect to server
-            String s = "localhost";
+            String s = window.inputServer.Text;
             // init redis
             redis = await ConnectionMultiplexer.ConnectAsync(s);
             db = redis.GetDatabase();
@@ -80,13 +78,16 @@ namespace Server
         {
             if (!live)
             {
+                // connect to redis
+                await initRedis();
+
                 live = true;
-                window.updateText("Server is live.");
                 // listen for new players
                 await sub.SubscribeAsync("find", (channel, msg) =>
                 {
                     handlePlayer(msg);
                 });
+                window.updateText("Server is live.");
             } else
             {
                 window.updateText("Server is already live.");

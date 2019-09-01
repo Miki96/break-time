@@ -23,9 +23,6 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <!--<Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF474747"/>
-                </Trigger>-->
             </Style.Triggers>
         </Style>
     </Window.Resources>
@@ -38,7 +35,7 @@
                         <Ellipse x:Name="ball2" Fill="#FF3D3DFF" Height="10" Canvas.Left="250" Canvas.Top="529" Width="10"/>
                         <Rectangle x:Name="playerRect" Fill="#FF3D3DFF" Height="15" Canvas.Left="269" Canvas.Top="565" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <Rectangle x:Name="enemyRect" Fill="#FFEA3F24" Height="15" Canvas.Left="66" Canvas.Top="20" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Label x:Name="score" Content="0 : 0" Canvas.Left="185" Canvas.Top="1" Width="85" Foreground="White" FontSize="36" HorizontalContentAlignment="Right" FontWeight="Bold" FontFamily="Agency FB" Visibility="Hidden"/>
+                        <Label x:Name="score" Content="0 : 0" Canvas.Left="185" Canvas.Top="1" Width="85" Foreground="White" FontSize="36" HorizontalContentAlignment="Right" FontWeight="Bold" FontFamily="./#Agency FB" Visibility="Hidden"/>
                         <Rectangle x:Name="shield4" Fill="#FFFFEA18" Height="5" Width="400" Canvas.Top="0" Canvas.Left="0"/>
                         <Rectangle x:Name="shield5" Fill="#FFFF9618" Height="5" Width="400" Canvas.Top="5"/>
                         <Rectangle x:Name="shield6" Fill="#FFFF4218" Height="5" Width="400" Canvas.Top="10"/>
@@ -48,12 +45,12 @@
                     </Canvas>
                 </Border>
                 <Grid Cursor="SizeAll" HorizontalAlignment="Left" Height="40" Margin="10,0" VerticalAlignment="Top" Width="410" MouseLeftButtonDown="Grid_MouseLeftButtonDown" Background="#00000000">
-                    <Label x:Name="labelScore" Content="0 - 0" HorizontalAlignment="Left" Margin="170,0,0,0" VerticalAlignment="Top" Width="70" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40" Visibility="Hidden"/>
-                    <Label x:Name="labelShield" Content="SHIELD  0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" Height="40" FontWeight="Bold"/>
-                    <Label Content="TIME" HorizontalAlignment="Left" Margin="305,0,0,0" VerticalAlignment="Top" Width="47" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Right" Height="40"/>
-                    <Label Content=":" HorizontalAlignment="Left" Margin="367,0,0,0" VerticalAlignment="Top" Width="15" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40"/>
-                    <Label x:Name="labelTimeMinutes" Content="0" HorizontalAlignment="Left" Margin="345,0,0,0" VerticalAlignment="Top" Width="31" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" HorizontalContentAlignment="Right" Height="40"/>
-                    <Label x:Name="labelTimeSeconds" Content="00" HorizontalAlignment="Left" Margin="374,0,0,0" VerticalAlignment="Top" Width="33" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="Agency FB" FontWeight="Bold" Height="40"/>
+                    <Label x:Name="labelScore" Content="0 - 0" HorizontalAlignment="Left" Margin="170,0,0,0" VerticalAlignment="Top" Width="70" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40" Visibility="Hidden"/>
+                    <Label x:Name="labelShield" Content="SHIELD  0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" Height="40" FontWeight="Bold"/>
+                    <Label Content="TIME" HorizontalAlignment="Left" Margin="305,0,0,0" VerticalAlignment="Top" Width="47" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" HorizontalContentAlignment="Right" Height="40"/>
+                    <Label Content=":" HorizontalAlignment="Left" Margin="367,0,0,0" VerticalAlignment="Top" Width="15" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" HorizontalContentAlignment="Center" Height="40"/>
+                    <Label x:Name="labelTimeMinutes" Content="0" HorizontalAlignment="Left" Margin="345,0,0,0" VerticalAlignment="Top" Width="31" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" HorizontalContentAlignment="Right" Height="40" FontWeight="Bold"/>
+                    <Label x:Name="labelTimeSeconds" Content="00" HorizontalAlignment="Left" Margin="374,0,0,0" VerticalAlignment="Top" Width="33" FontSize="24" RenderTransformOrigin="-0.574,0.385" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" Height="40"/>
                     <Border Margin="100,5,110,5" BorderThickness="0" HorizontalAlignment="Center" BorderBrush="Black" Width="180">
                         <Grid x:Name="topScore" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Rectangle Fill="#FFE0E0E0" HorizontalAlignment="Left" Height="20" Stroke="#FF0C0C0C" VerticalAlignment="Top" Width="20" StrokeThickness="3"/>
@@ -66,24 +63,24 @@
                 </Grid>
                 <Grid x:Name="panelMenu" Margin="16,45,16,16">
                     <Label x:Name="info" Content="" Margin="0,442,0,0" VerticalAlignment="Top" Foreground="#FF646464" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" Width="250" Background="{x:Null}" Height="51" BorderThickness="2"/>
-                    <Label Content="USERNAME" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="Agency FB" FontWeight="Bold"/>
+                    <Label Content="USERNAME" Margin="0,140,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold"/>
                     <TextBox x:Name="inputTag" HorizontalAlignment="Center" Margin="74,184,74,0" TextWrapping="Wrap" Text="ShadowRunner" VerticalAlignment="Top" Width="250" Background="White" Foreground="Black" SelectionBrush="#FF666666" BorderBrush="#FFD6D6D6" TextAlignment="Center" MaxLines="1" Height="40" Padding="0" VerticalContentAlignment="Center" MaxLength="20"/>
-                    <Label Content="SERVER" Margin="0,242,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="Agency FB" FontWeight="Bold"/>
-                    <TextBox x:Name="inputServer" HorizontalAlignment="Center" Margin="74,286,74,0" TextWrapping="Wrap" Text="127.0.0.1:6379" VerticalAlignment="Top" Width="250" Background="White" Foreground="Black" SelectionBrush="#FF666666" BorderBrush="#FFD6D6D6" TextAlignment="Center" MaxLines="1" Height="40" Padding="0" VerticalContentAlignment="Center" MaxLength="20"/>
+                    <Label Content="SERVER" Margin="0,242,0,0" VerticalAlignment="Top" Foreground="Black" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold"/>
+                    <TextBox x:Name="inputServer" HorizontalAlignment="Center" Margin="74,286,74,0" Text="127.0.0.1:6379" VerticalAlignment="Top" Width="250" Background="White" Foreground="Black" SelectionBrush="#FF666666" BorderBrush="#FFD6D6D6" TextAlignment="Center" MaxLines="1" Height="40" Padding="0" VerticalContentAlignment="Center"/>
                     <Border Height="54" Margin="0,371,0,0" VerticalAlignment="Top" Width="250" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="#FFD6D6D6" >
-                        <Button x:Name="btnConnect" Cursor="Hand" Style="{StaticResource SameBackgroundButton}" Content="CONNECT" FontSize="24" BorderBrush="#FF4B4B4B" Foreground="Black" Click="BtnConnect_Click" FontFamily="Agency FB" Background="White" BorderThickness="2" FontWeight="Bold"/>
+                        <Button x:Name="btnConnect" Cursor="Hand" Style="{StaticResource SameBackgroundButton}" Content="CONNECT" FontSize="24" BorderBrush="#FF4B4B4B" Foreground="Black" Click="BtnConnect_Click" FontFamily="/Client;component/Fonts/#Agency FB" Background="White" BorderThickness="2" FontWeight="Bold"/>
                     </Border>
                     <Label x:Name="labelUser" Content="Generating ID" HorizontalAlignment="Right" Margin="0,10,0,0" VerticalAlignment="Top" Width="97" Foreground="Gray" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Visibility="Hidden"/>
                 </Grid>
                 <Grid x:Name="panelCountdown" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
-                    <Label x:Name="labelCountdown" Content="3" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="150" FontFamily="Agency FB"/>
+                    <Label x:Name="labelCountdown" Content="3" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="150" FontFamily="/Client;component/Fonts/#Agency FB"/>
                 </Grid>
                 <Grid x:Name="panelWaiting" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
-                    <Label x:Name="labelWaiting" Content="CLICK TO START" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold"/>
+                    <Label x:Name="labelWaiting" Content="CLICK TO START" Margin="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold"/>
                 </Grid>
                 <Grid x:Name="panelScore" Margin="15,150" Background="#CCEFEFEF" Visibility="Hidden">
-                    <Label x:Name="labelScorePanel" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold" Content="PLAYER" HorizontalContentAlignment="Center" Margin="0,82,0,216"/>
-                    <Label x:Name="labelScoreAction" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="Agency FB" FontWeight="Bold" Content="SCORED" HorizontalContentAlignment="Center" Margin="0,126,0,172"/>
+                    <Label x:Name="labelScorePanel" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" Content="PLAYER" HorizontalContentAlignment="Center" Margin="0,82,0,216"/>
+                    <Label x:Name="labelScoreAction" VerticalContentAlignment="Center" Foreground="#FF0E0E0E" FontSize="36" FontFamily="/Client;component/Fonts/#Agency FB" FontWeight="Bold" Content="SCORED" HorizontalContentAlignment="Center" Margin="0,126,0,172"/>
                     <Grid x:Name="panelScoreBlocks" HorizontalAlignment="Center" Height="71" Margin="49,188,49,0" VerticalAlignment="Top" Width="302">
                         <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="11,0,241,10" StrokeThickness="5" Fill="#FFEA3F24"/>
                         <Rectangle Height="50" Stroke="#FF0C0C0C" Width="50" Margin="66,0,186,10" StrokeThickness="5" Fill="#FF3D3DFF"/>

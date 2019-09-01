@@ -117,7 +117,7 @@ namespace Client
 
                 // get data 
                 string server = inputServer.Text;
-                player.Tag = inputTag.Text.Replace(' ', '_');
+                player.Tag = inputTag.Text;
 
                 // get server subscriber
                 sub = await RedisServer.GetSubscriber(server);

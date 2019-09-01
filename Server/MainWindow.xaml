@@ -18,10 +18,15 @@
             <Label Content="EMPTY" HorizontalAlignment="Left" Margin="244,10,0,0" VerticalAlignment="Top" Width="95" Height="45" Background="#FFE4E4E4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF4F4F4F"/>
             <Button Content="S" HorizontalAlignment="Left" Height="45" Margin="294,65,0,0" VerticalAlignment="Top" Width="45" Background="#FF4D4D4D" Foreground="#FFD6D6D6" FontSize="16"/>
         </Grid>
-        <Grid Height="40" Margin="10,135,10,0" VerticalAlignment="Top" Background="#FFC7C7C7">
-            <Button x:Name="start" Content="START" Margin="10" VerticalAlignment="Top" FontSize="9" Height="20" Click="Start_Click"/>
+        <Grid Height="71" Margin="10,130,10,0" VerticalAlignment="Top" Background="#FFC7C7C7">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="211*"/>
+                <ColumnDefinition Width="146*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="start" Content="START" Margin="10,41,10,0" VerticalAlignment="Top" FontSize="9" Height="20" Click="Start_Click" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="inputServer" Grid.ColumnSpan="2" Height="23" Margin="10,10,10,0" VerticalAlignment="Top" MaxLines="1" Text="127.0.0.1:6379"/>
         </Grid>
-        <ScrollViewer x:Name="scroll" Height="257" Margin="20,180,20,20" VerticalAlignment="Top" ScrollChanged="ScrollViewer_ScrollChanged">
+        <ScrollViewer x:Name="scroll" Margin="20,206,20,20" ScrollChanged="ScrollViewer_ScrollChanged">
             <TextBlock x:Name="info" TextWrapping="Wrap" Background="White"/>
         </ScrollViewer>
     </Grid>
