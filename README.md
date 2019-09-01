@@ -35,7 +35,7 @@ sudo service redis-server restart
 ```console
 127.0.0.1:6379
 ```
-5. Click START
+5. Click **START**
 
 #### Client
 1. Build the client project
@@ -45,6 +45,6 @@ sudo service redis-server restart
 ```console
 127.0.0.1:6379
 ```
-5. Click CONNECT
+5. Click **CONNECT**
 
 ![Banner bottom](Images/bannerDown.png)
