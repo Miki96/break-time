@@ -42,6 +42,8 @@ namespace Server
 
         // timer
         private Timer timer;
+        private Timer[] timers;
+        private Timer[] listeners;
         private int countTime;
         private int scoreTime;
         private int winTime;
@@ -51,6 +53,7 @@ namespace Server
 
         // check if game is full
         public bool Full { get; private set; }
+        public bool Half { get; private set; }
 
         public Game(Manager manager, int gameID, ISubscriber sub)
         {
@@ -78,6 +81,7 @@ namespace Server
             };
             // players
             Full = false;
+            Half = false;
             players = new List<Player>();
             score = new int[] { -1, -1, -1, -1, -1 };
             round = 0;
@@ -92,6 +96,8 @@ namespace Server
             winScreenTime = 5000;
             winTime = 0;
             scoreTime = 0;
+            timers = new Timer[2];
+            listeners = new Timer[2];
         }
 
         public void nextLevel()
@@ -220,6 +226,17 @@ namespace Server
                         nextLevel();
                     }
                     break;
+                case State.OFFLINE:
+                    // reduce offline time
+                    winTime -= refreshRate;
+                    if (winTime < 0)
+                    {
+                        winTime = 0;
+                        gameState = State.GAMEOVER;
+                        // end game
+                        endGame();
+                    }
+                    break;
                 case State.VICTORY:
                     // reduce win time
                     winTime -= refreshRate;
@@ -339,6 +356,12 @@ namespace Server
             // notify player
             int index = players.Count;
             gameInfoNotify(playerInfo.ID.ToString(), index);
+            notifyOnline(playerInfo.ID.ToString(), index);
+
+            // listen if player is online
+            listenPlayer(index);
+
+            // add to game
             players.Add(new Player(playerInfo.Tag, playerInfo.ID, index, new Coords(arena.Width/2, 0)));
             
             // check if game should start
@@ -347,6 +370,10 @@ namespace Server
                 Full = true;
                 // start game
                 startGameAsync();
+            }
+            else
+            {
+                Half = true;
             }
         }
 
@@ -365,32 +392,88 @@ namespace Server
             sub.PublishAsync(player, toSend);
         }
 
+        // notify player that server is online
+        private void notifyOnline(string player, int index)
+        {
+            timers[index] = new Timer(2000);
+            timers[index].Elapsed += (o, e) => {
+                sub.PublishAsync("live:" + player, "live");
+            };
+            timers[index].Start();
+        }
+
+        // listen if player is online
+        private async void listenPlayer(int index)
+        {
+            // listen for player
+            await sub.SubscribeAsync("liveGame:" + gameID + "" + index, (channel, msg) =>
+            {
+                players[index].online = true;
+            });
+
+            // check for input
+            listeners[index] = new Timer(3000);
+            listeners[index].Elapsed += (o, e) => {
+                if (!players[index].online && gameState != State.OFFLINE)
+                {
+                    // break game
+                    if (Full)
+                    {
+                        scored = players[(index == 0) ? 1 : 0].tag;
+                        winTime = winScreenTime;
+                        gameState = State.OFFLINE;
+                    } else
+                    {
+                        endGame();
+                    }
+                    // stop listener
+                    listeners[index].Stop();
+                    listeners[index] = null;
+                }
+                else
+                {
+                    players[index].online = false;
+                }
+            };
+            listeners[index].Start();
+        }
+
         // end current game
         public async void endGame()
         {
-            // stop timer
-            timer.Stop();
+            // stop timers
+            if (timer != null) timer.Stop();
+            for (int i = 0; i < timers.Length; i++)
+            {
+                if (timers[i] != null) timers[i].Stop();
+                if (listeners[i] != null) listeners[i].Stop();
+            }
 
             // stop listening
             await sub.UnsubscribeAsync("action" + gameID);
+            await sub.UnsubscribeAsync("liveGame:" + gameID + "0");
+            await sub.UnsubscribeAsync("liveGame:" + gameID + "1");
 
-            // notify players that game ended
-            GameState currentState = new GameState()
+            if (players.Count == 2)
             {
-                Type = State.GAMEOVER,
-                Players = new Coords[] { players[0].pos, players[1].pos },
-                Balls = balls,
-                Score = score,
-                Count = (countTime / 1000),
-                Ready = new bool[] { players[0].ready, players[1].ready },
-                Blocks = arena.Blocks,
-                Shields = new int[] { players[0].shield, players[1].shield },
-                time = time,
-                Scored = scored,
-            };
-            // send state
-            string toSend = JsonConvert.SerializeObject(currentState);
-            await sub.PublishAsync("game" + gameID, toSend);
+                // notify players that game ended
+                GameState currentState = new GameState()
+                {
+                    Type = State.GAMEOVER,
+                    Players = new Coords[] { players[0].pos, players[1].pos },
+                    Balls = balls,
+                    Score = score,
+                    Count = (countTime / 1000),
+                    Ready = new bool[] { players[0].ready, players[1].ready },
+                    Blocks = arena.Blocks,
+                    Shields = new int[] { players[0].shield, players[1].shield },
+                    time = time,
+                    Scored = scored,
+                };
+                // send state
+                string toSend = JsonConvert.SerializeObject(currentState);
+                await sub.PublishAsync("game" + gameID, toSend);
+            }
 
             // clear game
             initGame();

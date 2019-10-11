@@ -114,12 +114,25 @@ namespace Server
             {
                 // find game
                 Game game = null;
+                // check if there is a game with one player
                 for (int i = 0; i < games.Count; i++)
                 {
-                    if (!games[i].Full)
+                    if (!games[i].Full && games[i].Half)
                     {
                         game = games[i];
                         break;
+                    }
+                }
+                // check for any empty game
+                if (game == null)
+                {
+                    for (int i = 0; i < games.Count; i++)
+                    {
+                        if (!games[i].Full)
+                        {
+                            game = games[i];
+                            break;
+                        }
                     }
                 }
                 // add player to a game

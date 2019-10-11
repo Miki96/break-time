@@ -33,7 +33,8 @@ namespace Client
         GAMEPLAY,
         SCORE,
         VICTORY,
-        GAMEOVER
+        GAMEOVER,
+        OFFLINE
     }
 
     // new player info

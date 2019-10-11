@@ -17,6 +17,7 @@ namespace Server
         public int width;
         public int blocks;
         public int shield;
+        public bool online;
 
         public Player(String tag, int id, int index, Coords pos)
         {
@@ -29,6 +30,7 @@ namespace Server
             width = 60;
             blocks = 0;
             shield = 1;
+            online = true;
         }
 
         public void reset()
@@ -37,6 +39,7 @@ namespace Server
             width = 60;
             shield = 1;
             blocks = 0;
+            online = true;
         }
 
         public void blockHit(int points)

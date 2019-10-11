@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using StackExchange.Redis;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Client
 {
@@ -28,8 +29,11 @@ namespace Client
         ISubscriber sub;
 
         // game state
-        private PlayerState playerState;
+        private volatile PlayerState playerState;
         private State currentState;
+
+        // server
+        private volatile bool serverLive;
 
         // player
         Player player;
@@ -42,6 +46,10 @@ namespace Client
 
         // blocks
         Rectangle[,] rectBlocks;
+
+        // timers
+        System.Timers.Timer timerServer;
+        System.Timers.Timer timerPlayer;
 
 
         // INITIATION
@@ -67,6 +75,11 @@ namespace Client
             // arena
             arena = new Arena();
 
+            // server
+            serverLive = true;
+
+            timerPlayer = null;
+            timerServer = null;
         }
 
         private void initBlocks()
@@ -111,7 +124,7 @@ namespace Client
         
         private async Task connectToServer()
         {
-            if (playerState != PlayerState.SEARCHING)
+            if (playerState == PlayerState.LOBBY)
             {
                 playerState = PlayerState.SEARCHING;
 
@@ -131,19 +144,37 @@ namespace Client
                 // listen to server for changes
                 await sub.SubscribeAsync(player.ID.ToString(), (channel, msg) =>
                 {
-                    handleLobby(msg);
+                    handleLobby(JsonConvert.DeserializeObject<GameResponse>(msg));
                 });
 
                 // send request to server
                 await sub.PublishAsync("find", toSend);
+
+                // wait 5 seconds for server response
+                responseTimeout();
             }
         }
 
-        private async void handleLobby(String msg)
+        // check if server is responsive
+        private void responseTimeout()
         {
-            // read response
-            GameResponse response = JsonConvert.DeserializeObject<GameResponse>(msg);
+            Task.Run(() =>
+            {
+                Thread.Sleep(3000);
+                // check if still searching
+                if (playerState == PlayerState.SEARCHING)
+                {
+                    handleLobby(new GameResponse() {
+                        GameID = -1,
+                        Index = -1,
+                        Response = ResponseType.ERROR
+                    });
+                }
+            });
+        }
 
+        private async void handleLobby(GameResponse response)
+        {
             // unsubscribe from channel
             await sub.UnsubscribeAsync(player.ID.ToString());
 
@@ -164,7 +195,7 @@ namespace Client
                 case ResponseType.ERROR:
                     // server error
                     playerState = PlayerState.LOBBY;
-                    runAction(setLabelText(info, "Server ERROR.\nPress CONNECT to try again."));
+                    runAction(setLabelText(info, "Server OFFLINE.\nPress CONNECT to try again."));
                     break;
                 default:
                     break;
@@ -179,13 +210,62 @@ namespace Client
             // subscribe to server
             await sub.SubscribeAsync("game" + gameID, (channel, msg) =>
             {
-                handleGame(msg);
+                handleGame(JsonConvert.DeserializeObject<GameState>(msg));
             });
+            // online checker
+            onlineCheck();
+            // send confirmation that player is online
+            playerCheck();
         }
 
-        private async void handleGame(string msg)
+        // notify server that player is online
+        private void playerCheck()
         {
-            GameState gameState = JsonConvert.DeserializeObject<GameState>(msg);
+            timerPlayer = new System.Timers.Timer(2000);
+            timerPlayer.Elapsed += (o, e) => {
+                sub.PublishAsync("liveGame:" + gameID + "" + player.Index, "live");
+            };
+            timerPlayer.Start();
+        }
+
+        // check if server is still online
+        private void onlineCheck()
+        {
+            // subcribe to server online notifications
+            sub.SubscribeAsync("live:" + player.ID, (channel, msg) =>
+            {
+                serverLive = true;
+            });
+
+            // periodicly check if server is online
+            timerServer = new System.Timers.Timer(3000);
+            timerServer.Elapsed += (o, e) => {
+                if (!serverLive)
+                {
+                    // unsubscribe
+                    sub.UnsubscribeAsync("live:" + player.ID);
+                    sub.UnsubscribeAsync("game" + gameID);
+                    currentState = State.GAMEOVER;
+                    // show menu
+                    runAction(showPanel(panelMenu));
+                    runAction(setLabelText(info, "Server OFFLINE.\nPress CONNECT to try again."));
+                    // disable timers
+                    if (timerPlayer != null) timerPlayer.Stop();
+                    if (timerServer != null) timerServer.Stop();
+                    // reset game
+                    initData();
+                    hideBlocks();
+                }
+                else
+                {
+                    serverLive = false;
+                }
+            };
+            timerServer.Start();
+        }
+
+        private async void handleGame(GameState gameState)
+        {
 
             // update game state
             updateGame(gameState);
@@ -247,6 +327,19 @@ namespace Client
                     }
                     break;
 
+                case State.OFFLINE:
+                    if (currentState != State.OFFLINE)
+                    {
+                        // show
+                        runAction(showPanel(panelScore));
+
+                        // set text
+                        runAction(setLabelText(labelScorePanel, gameState.Scored));
+                        runAction(setLabelText(labelScoreAction, "IS WINNER BY FORFEIT"));
+                        currentState = State.OFFLINE;
+                    }
+                    break;
+
                 case State.VICTORY:
                     if (currentState != State.VICTORY)
                     {
@@ -263,6 +356,7 @@ namespace Client
                 case State.GAMEOVER:
                     // unsubscribe
                     await sub.UnsubscribeAsync("game" + gameID);
+                    await sub.UnsubscribeAsync("live:" + player.ID);
 
                     currentState = State.GAMEOVER;
                     // show menu
@@ -270,6 +364,10 @@ namespace Client
 
                     // change state
                     runAction(setLabelText(info, ""));
+
+                    // disable timers
+                    if (timerPlayer != null) timerPlayer.Stop();
+                    if (timerServer != null) timerServer.Stop();
 
                     // reset game
                     initData();
@@ -279,7 +377,6 @@ namespace Client
                     break;
             }
         }
-
 
         // UI CHANGES
 
