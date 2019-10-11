@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
@@ -73,21 +70,29 @@ namespace Server
             }
         }
 
-        // subscribe to channel for players
+        // start listening for players
         public async void startServer()
         {
             if (!live)
             {
-                // connect to redis
-                await initRedis();
-
-                live = true;
-                // listen for new players
-                await sub.SubscribeAsync("find", (channel, msg) =>
+                try
                 {
-                    handlePlayer(msg);
-                });
-                window.updateText("Server is live.");
+                    // connect to redis
+                    await initRedis();
+                    live = true;
+                    // listen for new players
+                    await sub.SubscribeAsync("find", (channel, msg) =>
+                    {
+                        handlePlayer(msg);
+                    });
+                    window.updateText("Server is live.");
+
+                }
+                catch (Exception)
+                {
+                    window.updateText("redis: server offline");
+                }
+
             } else
             {
                 window.updateText("Server is already live.");

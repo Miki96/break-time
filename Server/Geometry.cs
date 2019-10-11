@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LineSegmentIntersection;
 
 namespace Server
@@ -13,10 +10,10 @@ namespace Server
         {
             Coords dir = new Coords(0, 0);
 
-            // one
             double w = player.width;
             double x = player.pos.X;
 
+            // check if ball and player are colliding
             if ((
                     player.index == 0 &&
                     ball.pos.Y + ball.size < (arena.Height - (arena.PlayerOffset - (ball.speed + 1))) &&
@@ -29,7 +26,7 @@ namespace Server
                 &&
                 (ball.pos.X > (x - w / 2) && ball.pos.X < (x + w / 2)))
             {
-                // calculate position of hit
+                // calculate position of collision
                 double p = (ball.pos.X - (x - w / 2)) / w;
                 double minAngle = 30;
                 double angle = (Math.PI / 180.0) * (p * (180 - 2 * minAngle) + minAngle);
@@ -215,13 +212,13 @@ namespace Server
             if (ball.pos.Y - ball.size < players[1].shield * 5)
             {
                 // lose shield
-                players[1].shield--;
+                players[1].shieldHit();
                 ball.dir.Y *= -1;
             }
             else if (ball.pos.Y + ball.size > arena.Height - (players[0].shield * 5))
             {
                 // lose shield
-                players[0].shield--;
+                players[0].shieldHit();
                 ball.dir.Y *= -1;
             }
         }

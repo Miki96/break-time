@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Threading;
-using LineSegmentIntersection;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -100,6 +96,7 @@ namespace Server
             listeners = new Timer[2];
         }
 
+        // reset game and load next level
         public void nextLevel()
         {
             // reset balls
@@ -108,8 +105,8 @@ namespace Server
                 new Ball(new Coords(arena.Width/2, arena.Height - (arena.PlayerOffset + 10)), 0, new Coords(-0.87, -0.5), 5, startSpeed)
             };
             // blocks
-            arena.loadBlocks(0);
             round++;
+            arena.loadBlocks(0);
             // time
             time = 0;
             // reset players
@@ -213,7 +210,7 @@ namespace Server
                         }
                     }
                     // move balls
-                    gameplayState();
+                    moveBalls();
                     break;
                 case State.SCORE:
                     // reduce scoretime
@@ -265,7 +262,7 @@ namespace Server
                 Count = (countTime / 1000),
                 Ready = new bool[] { players[0].ready, players[1].ready},
                 Blocks = arena.Blocks,
-                Shields = new int[] {players[0].shield, players[1].shield},
+                Shields = new int[] {Math.Max(players[0].shield, 0), Math.Max(players[1].shield, 0) },
                 time = time,
                 Scored = scored,
             };
@@ -276,7 +273,7 @@ namespace Server
         }
 
         // main ball logic
-        public void gameplayState()
+        public void moveBalls()
         {
             double freeSpace = (arena.Height - arena.BlocksHeight) / 2;
 

@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using StackExchange.Redis;
@@ -124,34 +116,44 @@ namespace Client
         
         private async Task connectToServer()
         {
-            if (playerState == PlayerState.LOBBY)
+            try
             {
-                playerState = PlayerState.SEARCHING;
-
-                // get data 
-                string server = inputServer.Text;
-                player.Tag = inputTag.Text;
-
-                // get server subscriber
-                sub = await RedisServer.GetSubscriber(server);
-
-                // prepare message to send
-                string toSend = JsonConvert.SerializeObject(player.generateInfo());
-
-                // ui update
-                runAction(setLabelText(info, "ID: " + player.ID + "\nLooking for oponents..."));
-
-                // listen to server for changes
-                await sub.SubscribeAsync(player.ID.ToString(), (channel, msg) =>
+                if (playerState == PlayerState.LOBBY)
                 {
-                    handleLobby(JsonConvert.DeserializeObject<GameResponse>(msg));
-                });
+                    playerState = PlayerState.SEARCHING;
 
-                // send request to server
-                await sub.PublishAsync("find", toSend);
+                    runAction(setLabelText(info, "ID: " + player.ID + "\nConnecting to redis server..."));
 
-                // wait 5 seconds for server response
-                responseTimeout();
+                    // get data 
+                    string server = inputServer.Text;
+                    player.Tag = inputTag.Text;
+
+                    // get server subscriber
+                    sub = await RedisServer.GetSubscriber(server);
+
+                    // prepare message to send
+                    string toSend = JsonConvert.SerializeObject(player.generateInfo());
+
+                    // ui update
+                    runAction(setLabelText(info, "ID: " + player.ID + "\nLooking for oponents..."));
+
+                    // listen to server for changes
+                    await sub.SubscribeAsync(player.ID.ToString(), (channel, msg) =>
+                    {
+                        handleLobby(JsonConvert.DeserializeObject<GameResponse>(msg));
+                    });
+
+                    // send request to server
+                    await sub.PublishAsync("find", toSend);
+
+                    // wait few seconds for server response
+                    responseTimeout();
+                }
+            }
+            catch (Exception)
+            {
+                playerState = PlayerState.LOBBY;
+                runAction(setLabelText(info, "Redis server offline."));
             }
         }
 
